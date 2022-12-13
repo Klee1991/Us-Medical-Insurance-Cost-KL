@@ -1,0 +1,466 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# # U.S. Medical Insurance Costs
+
+# In[19]:
+
+
+#My goal is to find which area's has more insurance cost and compare them with each other.
+#I want to report that certain area has higher insurance cost. DONE
+#also report that Smokers vs Non-smokers have a difference in insurance cost due to risk factor. DONE
+#calculating by region DONE
+#comparing children vs non-children DONE
+#smokers/children vs non-smoker/non-children DONE
+#smoker/non-children vs non-smoker/children DONE
+
+import csv
+
+ages_group = []
+sex = []
+bmi = []
+num_children = []
+smoker_status = []
+region = []
+insurance_charges = []
+with open('insurance.csv') as insurance_file:
+    insurance_csv = csv.DictReader(insurance_file)
+    for data in insurance_csv:
+        ages_group.append(data['age'])
+        sex.append(data['sex'])
+        bmi.append(data['bmi'])
+        num_children.append(data['children'])
+        smoker_status.append(data['smoker'])
+        region.append(data['region'])
+        insurance_charges.append(data['charges'])
+        
+changed_insurance = [eval(i) for i in insurance_charges]
+num_of_children = [eval(i) for i in num_children]
+num_bmi = [eval(i) for i in bmi]
+changed_ages = [eval(i) for i in ages_group]
+
+
+def average_cost(lst):
+    sum_of_cost = 0
+    avereage = 0
+    for i in lst:
+        sum_of_cost += i
+        average = sum_of_cost / len(lst)
+    print("The sum of all insurance cost is $ " + str(round(sum_of_cost,2)))
+    print("The average cost of all insurance is $ " + str(round(average,2)))
+    
+        
+def smoke_status(smog,insurance_cost):
+    x = 0
+    y = 0
+    costx = 0
+    avgx = 0
+    costy = 0
+    avgy = 0
+    files = zip(smog,insurance_cost)
+    for smoke,cost in files:
+        if smoke == 'yes':
+            x += 1
+            costx += cost
+            avgx = costx / x
+        elif smoke == 'no':
+            y += 1  
+            costy += cost
+            avgy = costy / y
+    print("The number of smokers is " + str(x) +" and the average cost for insurance is $" + str(round(avgx,2)) + ".")
+    print("The number of non-smokers is " +str(y) +" and the average cost for insurance is $" + str(round(avgy,2))+".")
+
+smoke_status(smoker_status,changed_insurance)
+#The average cost of insurance for smokers are higher than non-smokers.
+#Its assumed that smokers have a higher risk so therefore their insurance would cost higher.
+
+
+# In[249]:
+
+
+def child_cost(child,insurance_cost):
+    x = 0
+    y = 0
+    costx = 0
+    avgx = 0
+    costy = 0
+    avgy = 0
+    files = zip(child,insurance_cost)
+    for kids,cost in files:
+        if kids == 0:
+            x += 1
+            costx += cost
+            avgx = costx / x
+        elif kids > 0:
+            y += 1  
+            costy += cost
+            avgy = costy / y
+    print("The number of patients with no children is " + str(x) +" and the average cost for insurance is $" + str(round(avgx,2)) + ".")
+    print("The number of patients with children is " +str(y) +" and the average cost for insurance is $" + str(round(avgy,2))+".")
+child_cost(num_of_children,changed_insurance)
+
+#This data is kind of hard to observe because it doesn't explain a lot because the average insurance cost is $13270.
+#But it does show that having children vs no children it does cost more in insurance.
+
+
+# In[216]:
+
+
+def region_status(status,insurance_cost):
+    ne = 0
+    nw = 0
+    se = 0
+    sw = 0
+    costne = 0
+    avgne = 0
+    costnw = 0
+    avgnw = 0
+    costse = 0
+    avgse = 0
+    costsw = 0
+    avgsw = 0
+    zipped_files = zip(status, insurance_cost)
+    for state,cost in zipped_files:
+        if state == 'northeast':
+            ne += 1
+            costne += cost
+            avgne = costne / ne
+        elif state == 'northwest':
+            nw += 1
+            costnw += cost
+            avgnw = costnw / nw
+        elif state == 'southeast':
+            se += 1
+            costse += cost
+            avgse = costse / se
+        elif state == 'southwest':
+            sw += 1
+            costsw += cost
+            avgsw = costsw / sw
+    print("The number of Northeast region patients is: " +str(ne) + " and average cost is: $"+ str(round(avgne,2)))
+    print("The number of Northwest region patients is: " +str(nw)+ " and average cost is: $"+ str(round(avgnw,2)))
+    print("The number of Southeast region patients is: " +str(se)+ " and average cost is: $"+ str(round(avgse,2)))
+    print("The number of Southwest region patients is: " +str(sw)+ " and average cost is: $"+ str(round(avgsw,2)))
+    
+
+    
+    
+region_status(region, changed_insurance)
+average_cost(changed_insurance)
+#It would seem that the general average cost of insurance is the same no matter which region they live.
+
+
+# In[235]:
+
+
+def count_per_county(smokey,count,insurance_cost):
+    sne = 0
+    costsne = 0
+    avgsne = 0
+    nne = 0
+    costnne = 0
+    avgnne = 0
+    
+    snw = 0
+    costsnw = 0
+    avgsnw = 0
+    nnw = 0
+    costnnw = 0
+    avgnnw = 0
+    sse = 0
+    costsse = 0
+    avgsse = 0
+    nse = 0
+    costnse = 0
+    avgnse = 0
+    ssw = 0
+    costssw = 0
+    avgssw = 0
+    nsw = 0
+    costnsw = 0
+    avgnsw = 0
+    files = zip(smokey,count, insurance_cost)
+    for s,c,money in files:
+        if s == 'yes' and c == 'northeast':
+            sne +=1
+            costsne += money
+            avgsne = costsne / sne            
+        elif s == 'no' and c == 'northeast':
+            nne +=1
+            costnne += money
+            avgnne = costnne / nne     
+        elif s == 'yes' and c == 'northwest':
+            snw +=1
+            costsnw += money
+            avgsnw = costsnw / snw    
+        elif s == 'no' and c == 'northwest':
+            nnw +=1
+            costnnw += money
+            avgnnw = costnnw / nnw     
+        elif s == 'yes' and c == 'southeast':
+            sse +=1
+            costsse += money
+            avgsse = costsse / sse     
+        elif s == 'no' and c == 'southeast':
+            nse +=1
+            costnse += money
+            avgnse = costnse / nse     
+        elif s == 'yes' and c == 'southwest':
+            ssw +=1
+            costssw += money
+            avgssw = costssw / ssw     
+        elif s == 'no' and c == 'southwest':
+            nsw +=1
+            costnsw += money
+            avgnsw = costnsw / nsw     
+        else: 
+            return
+    print("The number of Northeast region patients that smoke is: " + str(sne))
+    print("The average cost for this region is $ " + str(round(avgsne,2)))
+    print("The number of Northeast region patients that do not smoke is: " + str(nne))
+    print("The average cost for this region is $ " + str(round(avgnne,2)))
+    print("The number of Northwest region patients that smoke is: " + str(snw))
+    print("The average cost for this region is $ " + str(round(avgsnw,2)))
+    print("The number of Northwest region patients that do not smoke is: " + str(nnw))
+    print("The average cost for this region is $ " + str(round(avgnnw,2)))
+    print("The number of Southeast region patients that smoke is: " + str(sse))
+    print("The average cost for this region is $ " + str(round(avgsse,2)))
+    print("The number of Southeast region patients that do not smoke is: " + str(nse))
+    print("The average cost for this region is $ " + str(round(avgnse,2)))
+    print("The number of Southwest region patients that smoke is: " + str(ssw))
+    print("The average cost for this region is $ " + str(round(avgssw,2)))
+    print("The number of Southwest region patients that do not smoke is: " + str(nsw))
+    print("The average cost for this region is $ " + str(round(avgnsw,2)))
+    
+count_per_county(smoker_status,region,changed_insurance)
+#Data calculates by each region, smoker/non-smoker, and the average cost of insurance.
+#We observe that further that Non-smokers from any region will alway have a lower cost of insurance.
+
+
+# In[283]:
+
+
+def no_children_smokers(smokers, kids, insurance_cost):
+    x = 0
+    y = 0
+    costx = 0
+    avgx = 0
+    costy = 0
+    avgy = 0
+    
+    for smoke,kid,money in zip(smokers,kids,insurance_cost):
+        if smoke == 'yes' and kid == 0:
+            x += 1
+            costx += money
+            avgx = costx / x
+        elif smoke == 'no' and kid == 0:
+            y += 1
+            costy += money
+            avgy = costy / y
+    print(x,round(costx,2), round(avgx,2))
+    print(y,round(costy,2), round(avgy,2))
+    print(avgx - avgy)
+        
+no_children_smokers(smoker_status, num_of_children,changed_insurance)
+#Observed data shows that smoking with no kids vs non smoker with no kids has greatly difference in average
+
+
+# In[284]:
+
+
+def children_smokers(smokers, kids, insurance_cost):
+    x = 0
+    y = 0
+    costx = 0
+    avgx = 0
+    costy = 0
+    avgy = 0
+    
+    for smoke,kid,money in zip(smokers,kids,insurance_cost):
+        if smoke == 'yes' and kid > 0:
+            x += 1
+            costx += money
+            avgx = costx / x
+        elif smoke == 'no' and kid > 0:
+            y += 1
+            costy += money
+            avgy = costy / y
+    print(x,round(costx,2), round(avgx,2))
+    print(y,round(costy,2), round(avgy,2))
+    print(avgx - avgy)
+        
+children_smokers(smoker_status, num_of_children,changed_insurance)
+#again shows that not smoking will significantly reduce the avergage cost of insurance.
+
+
+# In[17]:
+
+
+def bmi_cost(bmi, insurance_cost):
+    #10 between 20
+    x = 0
+    costx = 0
+    avgx = 0
+    #20 between 30
+    y = 0
+    costy = 0
+    avgy = 0
+    #30 between 40
+    z = 0
+    costz = 0
+    avgz = 0
+    #40 between 50
+    t = 0
+    costt = 0
+    avgt = 0
+    #50 between 60
+    m = 0
+    costm = 0
+    avgm = 0
+    for bmis, money in zip(bmi,insurance_cost):
+        if bmis > 10 and bmis <= 20:
+            x += 1
+            costx += money
+            avgx = costx / x
+        elif bmis > 20 and bmis <=30:
+            y += 1
+            costy += money
+            avgy = costy / y
+        elif bmis > 30 and bmis <= 40:
+            z += 1
+            costz += money
+            avgz = costz / z
+        elif bmis > 40 and bmis <= 50:
+            t+= 1
+            costt += money
+            avgt = costt / t
+        elif bmis > 50 and bmis <= 60:
+            m+=1
+            costm += money
+            avgm = costm / m
+    print(x, costx,avgx)
+    print(y,costy,avgy)
+    print(z, costz, avgz)
+    print(t, costt, avgt)
+    print(m, costm, avgm)
+    
+bmi_cost(num_bmi,changed_insurance)
+
+#There is a lot of outliers in this data set. I would like to identify that bmis between: 50-60 is the outliers because the sample set is too small.
+#But you can see that the average cost of insurance increases when the BMI scale increase.
+#Which includes the risk factor of higher BMIs.
+#if we include those that smoke into the BMI range, will it matter for the average cost?
+#I believe that BMI will increase for those that do smoke which will bring the average cost higher.
+
+
+# In[23]:
+
+
+def average_age(age):
+    x = 0
+    count = 0
+    avg = 0
+    for i in age:
+        count += 1
+        x += i
+        avg = x / count
+    print(avg)
+average_age(changed_ages)    
+
+
+# In[39]:
+
+
+def average_age_kids(age, kids, cost):
+    xsum_of_age = 0
+    xsum_of_cost = 0
+    count = 0
+    avg = 0
+    avgc = 0
+    xsum_of_agek = 0
+    xsum_of_costk = 0
+    countk = 0
+    avgk = 0
+    avgck = 0
+    for a,k,c in zip(age,kids,cost):
+        if k > 0:
+            countk += 1
+            xsum_of_agek += a
+            xsum_of_costk += c
+            avgk = xsum_of_agek / countk
+            avgck = xsum_of_costk / countk
+        elif k == 0:
+            count += 1
+            xsum_of_age += a
+            xsum_of_cost += c
+            avg = xsum_of_age / count
+            avgc = xsum_of_cost / count
+    print(countk, avgk, avgck)
+    print(count, avg, avgc)
+
+average_age_kids(changed_ages, num_of_children,changed_insurance)
+
+#This data shows the amount of people in this dataset how many people have at least 1 child.
+#while shows the average ages of patients with kids.
+#It also shows the average ages of patients without kids and the average cost of insurance. 
+
+
+# In[42]:
+
+
+def gender_sum(gender):
+    x = 0
+    y = 0
+    for i in gender:
+        if i == 'male':
+            x += 1
+        elif i == 'female':
+            y += 1
+    print("This many males: "+ str(x) +" is in dataset.")
+    print("This many females: "+ str(y) + " in in dataset.")
+    
+gender_sum(sex)
+#Is there a difference of cost between male and female?
+#regardless if they have kids or smokers(we can build functions but time consuming at this point)
+#We will find out if there is a difference and 
+
+
+# In[54]:
+
+
+def gender_difference(gender, cost):
+    x = 0
+    y = 0
+    costx = 0
+    costy = 0
+    avgx = 0
+    avgy = 0
+    for i,c in zip(gender,cost):
+        if i == 'male':
+            x += 1
+            costx += c
+            avgx = costx / x
+        elif i == 'female':
+            y += 1
+            costy += c
+            avgy = costy / y
+    print(x, round(costx,2), round(avgx,2) , "Male")
+    print(y, round(costy,2), round(avgy,2), "Female")
+        
+gender_difference(sex,changed_insurance)
+#we found that in this dataset, the average cost is (regardless if they smoke or have kids)
+#is subjectly more for males but need more evidence to conclude finding.
+#we need to dive deeper like finding out if males smoke more than women.
+
+
+# In[ ]:
+
+
+#In conclusion, we find out that insurance cost is more for smokers because it holds a higher risk.
+#I would like to say that there is bias information on BMI scales because the sample set is so small.
+#even if I increase the age boundry, it would be hard to conclude that there is a difference because
+#we dont compare if they are smokers or not.  Which we can find, but can be time consuming.
+#We do notice that there isnt a big difference in cost for insurance in different regions.
+#But we do notice that in the southeast region insurance for smokers are significantly higher than other regions.
+#But again kind of bias because we do not know other factors that can increase the cost of insurance (BMI, KIDS).
+
